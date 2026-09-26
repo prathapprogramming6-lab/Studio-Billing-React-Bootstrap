@@ -13,7 +13,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Activate from "./pages/Activate";
 import Subscription from "./pages/Subscription";
-import Payment from "./pages/payment";
+import Payment from "./pages/Payment";
 
 import Dashboard from "./pages/Dashboard";
 import Customers from "./pages/Customers";
