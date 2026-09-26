@@ -1,4 +1,5 @@
 const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
   "https://studio-billing-react-bootstrap.onrender.com/api";
 
 export function getToken() {
@@ -33,9 +34,7 @@ export async function apiFetch(path, options = {}) {
 
   const headers = {
     ...(options.body !== undefined
-      ? {
-          "Content-Type": "application/json"
-        }
+      ? { "Content-Type": "application/json" }
       : {}),
     ...(options.headers || {})
   };
@@ -62,7 +61,6 @@ export async function apiFetch(path, options = {}) {
 
   if (response.status === 401) {
     clearSession();
-
     window.location.href = "/login";
 
     throw new Error(
