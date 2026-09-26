@@ -1,20 +1,9 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  "http://localhost:5000/api";
-
-
-// =====================================================
-// GET CURRENT TOKEN
-// =====================================================
+  "https://studio-billing-react-bootstrap.onrender.com/api";
 
 export function getToken() {
   return localStorage.getItem("studioToken") || "";
 }
-
-
-// =====================================================
-// GET CURRENT USER
-// =====================================================
 
 export function getStoredUser() {
   try {
@@ -26,17 +15,10 @@ export function getStoredUser() {
   }
 }
 
-
-// =====================================================
-// CLEAR SESSION
-// =====================================================
-
 export function clearSession() {
   [
     "studioToken",
     "studioUser",
-
-    // Remove old session keys also
     "authToken",
     "loggedInUser",
     "loggedInUserId",
@@ -46,34 +28,21 @@ export function clearSession() {
   });
 }
 
-
-// =====================================================
-// API FETCH
-// =====================================================
-
-export async function apiFetch(
-  path,
-  options = {}
-) {
+export async function apiFetch(path, options = {}) {
   const token = getToken();
 
   const headers = {
     ...(options.body !== undefined
       ? {
-          "Content-Type":
-            "application/json"
+          "Content-Type": "application/json"
         }
       : {}),
-
     ...(options.headers || {})
   };
 
-
   if (token) {
-    headers.Authorization =
-      `Bearer ${token}`;
+    headers.Authorization = `Bearer ${token}`;
   }
-
 
   const response = await fetch(
     `${API_BASE_URL}${path}`,
@@ -83,7 +52,6 @@ export async function apiFetch(
     }
   );
 
-
   let data = null;
 
   try {
@@ -92,37 +60,21 @@ export async function apiFetch(
     data = {};
   }
 
-
-  // ===================================================
-  // UNAUTHORIZED
-  // ===================================================
-
   if (response.status === 401) {
-
     clearSession();
 
-    window.location.href =
-      "/login";
+    window.location.href = "/login";
 
     throw new Error(
-      data.message ||
-        "Session expired"
+      data.message || "Session expired"
     );
   }
 
-
-  // ===================================================
-  // SOFTWARE NOT ACTIVATED
-  // ===================================================
-
   if (
     response.status === 403 &&
-    data.code ===
-      "SOFTWARE_NOT_ACTIVATED"
+    data.code === "SOFTWARE_NOT_ACTIVATED"
   ) {
-
-    window.location.href =
-      "/activate";
+    window.location.href = "/activate";
 
     throw new Error(
       data.message ||
@@ -130,57 +82,29 @@ export async function apiFetch(
     );
   }
 
-
-  // ===================================================
-  // SUBSCRIPTION EXPIRED
-  // ===================================================
-
   if (
     response.status === 403 &&
-    data.code ===
-      "SUBSCRIPTION_EXPIRED"
+    data.code === "SUBSCRIPTION_EXPIRED"
   ) {
-
     throw new Error(
       data.message ||
         "Your free trial or subscription has expired."
     );
   }
 
-
-  // ===================================================
-  // OTHER ERRORS
-  // ===================================================
-
   if (!response.ok) {
-
     throw new Error(
-      data.message ||
-        "Request failed"
+      data.message || "Request failed"
     );
   }
-
 
   return data;
 }
 
-
-// =====================================================
-// MONEY FORMAT
-// =====================================================
-
 export const money = (value) =>
-  `₹${Number(value || 0).toLocaleString(
-    "en-IN"
-  )}`;
-
-
-// =====================================================
-// DATE FORMAT
-// =====================================================
+  `₹${Number(value || 0).toLocaleString("en-IN")}`;
 
 export const dateText = (value) => {
-
   if (!value) return "-";
 
   const d = new Date(value);
@@ -189,12 +113,9 @@ export const dateText = (value) => {
     return value;
   }
 
-  return d.toLocaleDateString(
-    "en-IN",
-    {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    }
-  );
+  return d.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
 };
